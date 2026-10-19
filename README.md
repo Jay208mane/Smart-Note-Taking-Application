@@ -1,28 +1,9 @@
 # 📝 SmartNotes AI — Notes Management Application
 
-A complete, responsive, full-stack client-side Notes Management Web Application designed for **College Practical Examinations (Evaluation: 25 Marks)**.
 
 Built with pure **HTML5, CSS3, and modern Vanilla JavaScript (ES6+)** with persistent storage via browser **LocalStorage**. Requires zero external backend, zero database setup, and zero node/npm dependencies.
 
 ---
-
-
----
-
-## 🎯 Examination Marking Criteria Mapping (25 Marks)
-
-| Criterion | Marks Allocated | Implementation Details in SmartNotes AI |
-| :--- | :---: | :--- |
-| **1. Note CRUD Operations & Dialogs** | **5 Marks** | Modal form for creating & editing; custom confirmation modal before deletion; toast notifications; automated `createdAt` & `updatedAt` ISO timestamps formatted readably. |
-| **2. Instant Live Search** | **5 Marks** | Real-time dual-field search across note titles and content; live result count; friendly empty state when no notes match. Keyboard shortcut `/` to focus. |
-| **3. Folder Organization & Filters** | **5 Marks** | Default categories (`Personal`, `Work`, `Study`, `Others`) + `All Notes`; folder pill badges with distinct color themes; dynamic note count badges in sidebar. |
-| **4. Note Pinning System** | **5 Marks** | One-click pin/unpin toggling; pinned notes displayed in a distinct `📌 Pinned Notes` section at the top of the grid; pinned order preserved during sorting. |
-| **5. Persistent Browser Storage** | **3 Marks** | Data stored in `localStorage` as JSON; automatic load on refresh; defensive error handling (`try/catch`) against corrupted storage; sample notes initialized only on first visit. |
-| **6. AI-Assisted Writing Assistant** | **2 Marks** | Built-in offline smart text assistant (Extractive Summarizer, Grammar & Spacing Polisher, Action-item Bulletizer, Folder Auto-Detector, Structured Templates) + optional live Google Gemini / OpenAI API integration. |
-| **Total Score** | **25 / 25 Marks** | **Fully functional, responsive, tested, and verified.** |
-
----
-
 ## 🛠 Technology Stack
 
 - **Markup:** Semantic **HTML5** (`<aside>`, `<header>`, `<main>`, `<section>`, `<article>`, `<nav>`, `<form>`)
