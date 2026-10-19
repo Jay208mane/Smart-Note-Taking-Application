@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI-Assisted Notes Management Application with search, folder organization, pinning, and LocalStorage persistence.">
+  <title>SmartNotes AI - Notes Management Application</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Mobile Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+  <!-- App Container -->
+  <div class="app-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"/>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <h2>SmartNotes</h2>
+            <span class="badge-ai">AI-Assisted</span>
+          </div>
+        </div>
+        <button class="icon-btn mobile-close-btn" id="closeSidebarBtn" aria-label="Close sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Action Button -->
+      <div class="sidebar-action">
+        <button class="btn btn-primary btn-block" id="sidebarNewNoteBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span>Create New Note</span>
+        </button>
+      </div>
+
+      <!-- Folders Navigation -->
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Folders</div>
+        <ul class="folder-list">
+          <li class="folder-item">
+            <button class="folder-btn active" data-folder="all">
+              <span class="folder-icon icon-all">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+              </span>
+              <span class="folder-label">All Notes</span>
+              <span class="folder-count" id="count-all">0</span>
+            </button>
+          </li>
+          <li class="folder-item">
+            <button class="folder-btn" data-folder="Personal">
+              <span class="folder-icon icon-personal">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </span>
+              <span class="folder-label">Personal</span>
+              <span class="folder-count" id="count-Personal">0</span>
+            </button>
+          </li>
+          <li class="folder-item">
+            <button class="folder-btn" data-folder="Work">
+              <span class="folder-icon icon-work">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+              </span>
+              <span class="folder-label">Work</span>
+              <span class="folder-count" id="count-Work">0</span>
+            </button>
+          </li>
+          <li class="folder-item">
+            <button class="folder-btn" data-folder="Study">
+              <span class="folder-icon icon-study">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                </svg>
+              </span>
+              <span class="folder-label">Study</span>
+              <span class="folder-count" id="count-Study">0</span>
+            </button>
+          </li>
+          <li class="folder-item">
+            <button class="folder-btn" data-folder="Others">
+              <span class="folder-icon icon-others">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="1"/>
+                  <circle cx="19" cy="12" r="1"/>
+                  <circle cx="5" cy="12" r="1"/>
+                </svg>
+              </span>
+              <span class="folder-label">Others</span>
+              <span class="folder-count" id="count-Others">0</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Sidebar Footer Status -->
+      <div class="sidebar-footer">
+        <div class="ai-status-card" id="sidebarAiStatusCard">
+          <div class="ai-status-header">
+            <span class="ai-pulse-dot" id="aiStatusDot"></span>
+            <span class="ai-status-title" id="aiStatusTitle">Smart Assistant Ready</span>
+          </div>
+          <p class="ai-status-desc" id="aiStatusDesc">Offline rule-based helper active (no API key required).</p>
+          <button class="btn btn-outline-sm btn-block" id="openAiConfigBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            <span>Configure AI API</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      
+      <!-- Top Navigation Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn mobile-menu-btn" id="openSidebarBtn" aria-label="Open sidebar menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          
+          <!-- Live Search Bar -->
+          <div class="search-wrapper">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input 
+              type="text" 
+              id="searchInput" 
+              class="search-input" 
+              placeholder="Search notes by title or content... (Press '/' to focus)" 
+              autocomplete="off"
+            >
+            <button class="clear-search-btn" id="clearSearchBtn" aria-label="Clear search" title="Clear search">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Sort Dropdown -->
+          <div class="sort-wrapper">
+            <label for="sortSelect" class="sr-only">Sort notes by</label>
+            <select id="sortSelect" class="select-control" title="Sort notes">
+              <option value="updated-desc">Latest Modified</option>
+              <option value="created-desc">Newest Created</option>
+              <option value="created-asc">Oldest Created</option>
+              <option value="title-asc">Title (A &rarr; Z)</option>
+              <option value="title-desc">Title (Z &rarr; A)</option>
+            </select>
+          </div>
+
+          <button class="btn btn-primary topbar-new-btn" id="topbarNewNoteBtn">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            <span class="btn-text">New Note</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Dashboard View Content -->
+      <main class="dashboard-body">
+        
+        <!-- View Header Banner -->
+        <div class="view-header">
+          <div class="view-header-left">
+            <h1 class="view-title" id="activeViewTitle">All Notes</h1>
+            <span class="view-subtitle" id="activeViewSubtitle">Showing all your stored notes</span>
+          </div>
+          <div class="view-header-right">
+            <div class="quick-stats-pill" id="notesStatsPill">0 notes</div>
+          </div>
+        </div>
+
+        <!-- Search query active indicator bar -->
+        <div class="search-banner hidden" id="searchBanner">
+          <span id="searchBannerText">Results for "<strong></strong>"</span>
+          <button class="btn-link" id="resetSearchBannerBtn">Clear Search</button>
+        </div>
+
+        <!-- Notes Container -->
+        <div class="notes-display-area" id="notesDisplayArea">
+          
+          <!-- Pinned Section -->
+          <section class="notes-section" id="pinnedSection">
+            <div class="section-title-wrapper">
+              <h2 class="section-heading">
+                <span class="section-icon">📌</span> Pinned Notes
+                <span class="count-badge" id="pinnedSectionCount">0</span>
+              </h2>
+            </div>
+            <div class="notes-grid" id="pinnedGrid"></div>
+          </section>
+
+          <!-- Regular / Other Notes Section -->
+          <section class="notes-section" id="otherSection">
+            <div class="section-title-wrapper">
+              <h2 class="section-heading" id="otherSectionHeading">
+                <span class="section-icon">📝</span> Notes
+                <span class="count-badge" id="otherSectionCount">0</span>
+              </h2>
+            </div>
+            <div class="notes-grid" id="otherGrid"></div>
+          </section>
+
+          <!-- Empty State (Shown when 0 notes match) -->
+          <div class="empty-state hidden" id="emptyState">
+            <div class="empty-illustration">
+              <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="9" y1="13" x2="15" y2="13"/>
+                <line x1="9" y1="17" x2="13" y2="17"/>
+              </svg>
+            </div>
+            <h3 class="empty-title" id="emptyTitle">No notes found</h3>
+            <p class="empty-description" id="emptyDescription">You haven't created any notes in this folder yet. Get started by writing your first idea!</p>
+            <button class="btn btn-primary" id="emptyActionBtn">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span>Create Note</span>
+            </button>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Note Create/Edit Modal -->
+  <div class="modal-backdrop hidden" id="noteModal" role="dialog" aria-modal="true" aria-labelledby="noteModalTitle">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h2 class="modal-title" id="noteModalTitle">Create New Note</h2>
+          <span class="modal-subtitle" id="noteModalSubtitle">Fill in the details below</span>
+        </div>
+        <button class="icon-btn close-modal-btn" id="closeNoteModalBtn" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <form id="noteForm" class="modal-form" novalidate>
+        <input type="hidden" id="editNoteId" value="">
+
+        <!-- Title Input -->
+        <div class="form-group">
+          <label for="noteTitleInput" class="form-label">
+            Title <span class="required">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="noteTitleInput" 
+            class="form-control" 
+            placeholder="e.g. Physics Chapter 4 Summary or Team Sync Agenda" 
+            maxlength="120"
+            required
+          >
+          <div class="field-feedback" id="titleFeedback"></div>
+        </div>
+
+        <!-- Meta Controls (Folder and Pin) -->
+        <div class="form-row">
+          <div class="form-group col-half">
+            <label for="noteFolderSelect" class="form-label">Folder</label>
+            <div class="select-wrapper">
+              <select id="noteFolderSelect" class="form-control select-control">
+                <option value="Personal">Personal</option>
+                <option value="Work">Work</option>
+                <option value="Study">Study</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group col-half flex-align-end">
+            <label class="checkbox-container">
+              <input type="checkbox" id="notePinCheckbox">
+              <span class="custom-checkbox"></span>
+              <span class="checkbox-label">
+                <span class="pin-icon">📌</span> Pin note to the top
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- AI Writing Assistant Toolbar -->
+        <div class="ai-assistant-toolbar">
+          <div class="ai-toolbar-header">
+            <div class="ai-toolbar-badge">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+              </svg>
+              <span id="aiToolbarModeText">AI Writing Assistant</span>
+            </div>
+            <div class="ai-helper-indicator" id="aiHelperIndicator">Built-in (Offline)</div>
+          </div>
+          <div class="ai-toolbar-actions">
+            <button type="button" class="btn-ai" id="aiSummarizeBtn" title="Summarize the content">
+              <span>📝 Summarize</span>
+            </button>
+            <button type="button" class="btn-ai" id="aiPolishBtn" title="Improve grammar, casing, and formatting">
+              <span>✨ Polish Writing</span>
+            </button>
+            <button type="button" class="btn-ai" id="aiBulletsBtn" title="Convert note to bulleted action items">
+              <span>📋 Bullet Points</span>
+            </button>
+            <button type="button" class="btn-ai" id="aiFolderSuggestBtn" title="Auto-detect folder based on note text">
+              <span>🏷️ Suggest Folder</span>
+            </button>
+            <div class="dropdown-wrapper">
+              <button type="button" class="btn-ai dropdown-toggle" id="templatesDropdownBtn">
+                <span>📑 Template ▾</span>
+              </button>
+              <div class="dropdown-menu hidden" id="templatesMenu">
+                <button type="button" class="dropdown-item" data-template="study">Study Notes (Cornell Style)</button>
+                <button type="button" class="dropdown-item" data-template="meeting">Meeting Minutes &amp; Action Items</button>
+                <button type="button" class="dropdown-item" data-template="todo">Daily Task / To-Do List</button>
+                <button type="button" class="dropdown-item" data-template="project">Project Plan &amp; Specs</button>
+              </div>
+            </div>
+          </div>
+          <!-- AI Action Output / Diff notice -->
+          <div class="ai-message-notice hidden" id="aiNotice">
+            <span id="aiNoticeText"></span>
+            <button type="button" class="btn-link-sm" id="undoAiBtn">Undo</button>
+          </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="form-group">
+          <div class="label-with-counter">
+            <label for="noteContentInput" class="form-label">
+              Content <span class="required">*</span>
+            </label>
+            <span class="char-counter" id="contentCounter">0 words</span>
+          </div>
+          <textarea 
+            id="noteContentInput" 
+            class="form-control textarea-control" 
+            rows="9" 
+            placeholder="Type your note content here... You can use bullet points, numbered lists, or plain text."
+            required
+          ></textarea>
+          <div class="field-feedback" id="contentFeedback"></div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <div class="timestamps-display" id="modalTimestamps">
+            <!-- Dynamically populated when editing -->
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="cancelNoteModalBtn">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="saveNoteBtn">Save Note</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-backdrop hidden" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+    <div class="modal-card modal-sm">
+      <div class="modal-body text-center">
+        <div class="delete-icon-wrapper">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            <line x1="10" y1="11" x2="10" y2="17"/>
+            <line x1="14" y1="11" x2="14" y2="17"/>
+          </svg>
+        </div>
+        <h3 class="modal-title" id="deleteModalTitle">Delete Note</h3>
+        <p class="delete-warning-text">
+          Are you sure you want to delete <strong id="deleteNoteTitleText">"Untitled Note"</strong>? This action cannot be undone.
+        </p>
+      </div>
+      <div class="modal-footer justify-center">
+        <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI API Configuration Modal -->
+  <div class="modal-backdrop hidden" id="aiConfigModal" role="dialog" aria-modal="true" aria-labelledby="aiConfigTitle">
+    <div class="modal-card modal-md">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h2 class="modal-title" id="aiConfigTitle">AI Assistant Settings</h2>
+          <span class="modal-subtitle">Configure optional Live AI or use built-in helpers</span>
+        </div>
+        <button class="icon-btn close-modal-btn" id="closeAiConfigBtn" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="info-alert">
+          <div class="info-alert-icon">💡</div>
+          <div class="info-alert-text">
+            <strong>No API Key Required:</strong> SmartNotes comes equipped with a built-in offline smart text assistant that performs summarization, grammar polish, formatting, and template generation completely offline without requiring any key or internet connection.
+          </div>
+        </div>
+
+        <form id="aiConfigForm" class="modal-form">
+          <div class="form-group">
+            <label for="aiProviderSelect" class="form-label">Assistant Mode</label>
+            <select id="aiProviderSelect" class="form-control select-control">
+              <option value="offline">Built-in Smart Assistant (Offline / Free - Default)</option>
+              <option value="gemini">Google Gemini API (Live AI)</option>
+              <option value="openai">OpenAI API (Live AI)</option>
+            </select>
+          </div>
+
+          <div class="form-group hidden" id="apiKeyGroup">
+            <label for="aiApiKeyInput" class="form-label">
+              API Key <span class="required">*</span>
+            </label>
+            <div class="password-wrapper">
+              <input 
+                type="password" 
+                id="aiApiKeyInput" 
+                class="form-control" 
+                placeholder="Enter your API key (stored securely in browser LocalStorage only)"
+              >
+              <button type="button" class="toggle-password-btn" id="toggleApiKeyVisibility" aria-label="Toggle API key visibility">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <p class="form-hint" id="apiKeyHint">Your key is never sent to our servers; requests are made directly from your browser.</p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="cancelAiConfigBtn">Close</button>
+            <button type="submit" class="btn btn-primary" id="saveAiConfigBtn">Save Configuration</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Application Script -->
+  <script src="js/app.js"></script>
+</body>
+</html>
