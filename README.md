@@ -6,16 +6,6 @@ Built with pure **HTML5, CSS3, and modern Vanilla JavaScript (ES6+)** with persi
 
 ---
 
-## 📑 Table of Contents
-1. [Examination Marking Criteria Mapping (25 Marks)](#-examination-marking-criteria-mapping-25-marks)
-2. [Technology Stack](#-technology-stack)
-3. [Core Features Breakdown](#-core-features-breakdown)
-4. [AI Writing Assistant Architecture](#-ai-writing-assistant-architecture)
-5. [Project Directory Structure](#-project-directory-structure)
-6. [Key JavaScript Functions Reference](#-key-javascript-functions-reference)
-7. [How to Run the Application](#-how-to-run-the-application)
-8. [Automated Verification & Test Results](#-automated-verification--test-results)
-9. [Viva Voce Examination Questions & Answers](#-viva-voce-examination-questions--answers)
 
 ---
 
